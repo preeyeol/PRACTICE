@@ -1,0 +1,19 @@
+{
+  "name": "nodemailer-sendgrid-transport",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --watch index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemailer": "^6.9.16",
+    "nodemailer-sendgrid": "^1.0.3",
+    "nodemailer-sendgrid-transport": "^0.2.0"
+  }
+}
