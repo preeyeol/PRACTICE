@@ -1,36 +1,24 @@
 const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
-// const twilio = require("twilio");
-const { Infobip, AuthType } = require("@infobip-api/sdk");
-// const crypto = require("crypto");
-// const userSchema = require("./model/userSchema");
+const twilio = require("twilio");
+
+const userSchema = require("./model/userSchema");
 
 const app = express();
 app.use(express.json());
 
-// const accountSid = process.env.TWILIO_ACCOUNT_SID;
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const client = new twilio(accountSid, authToken);
-
-let infobip = new Infobip({
-  baseUrl: "YOUR_BASE_URL",
-  apiKey: "YOUR_API_KEY",
-  authType: AuthType.ApiKey,
-});
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = new twilio(accountSid, authToken);
 
 const sendOTP = async (phone, otp) => {
   try {
-    let response = await infobip.channels.whatsapp.send({
-      type: "text",
-      from: "447860099299",
-      to: "447123456789",
-      content: {
-        text: "Hello World",
-      },
+    const message = await client.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: phone,
     });
-
-    console.log(response);
     console.log(`OTP sent to ${phone}: ${message.sid}`);
   } catch (error) {
     console.error("Error sending OTP:", error);
@@ -43,8 +31,6 @@ app.post("/sendotp", async (req, res) => {
     Math.floor(Math.random() * (max - min + 1)) + min;
 
   const otp = randomInt(100000, 999999);
-  const encryptOTP = (otp) =>
-    crypto.createHash("sha256").update(otp.toString()).digest("hex");
 
   try {
     const user = await userSchema.findOneAndUpdate(
