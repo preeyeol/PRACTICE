@@ -39,6 +39,8 @@ app.post("/sendotp", async (req, res) => {
       { upsert: true, new: true }
     );
 
+    await user.save();
+
     await sendOTP(phone, otp);
 
     res.status(200).json({ success: true, message: "OTP sent successfully" });
