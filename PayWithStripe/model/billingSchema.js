@@ -1,19 +1,19 @@
 const mongoose = require("mongoose");
 
-const billingSchema = new mongoose.Schema({
-  stripeCustomerId: { type: String, required: true },
-  name: { type: String },
-  email: { type: String },
-  phone: { type: String },
-  address: {
-    line1: { type: String },
-    line2: { type: String },
-    city: { type: String },
-    state: { type: String },
-    postal_code: { type: String },
-    country: { type: String },
-  },
+const checkoutSessionSchema = new mongoose.Schema({
+  sessionId: { type: String, required: true, unique: true },
+  customerEmail: { type: String, required: true },
+  customerName: { type: String },
+  amountTotal: { type: Number, required: true },
+  currency: { type: String, required: true },
+  paymentStatus: { type: String, required: true },
+  paymentIntent: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Customer", billingSchema);
+const CheckoutSession = mongoose.model(
+  "CheckoutSession",
+  checkoutSessionSchema
+);
+
+module.exports = CheckoutSession;

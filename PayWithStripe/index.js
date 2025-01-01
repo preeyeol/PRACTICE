@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const stripe = require("stripe")(process.env.STRIPE_API_KEY);
 const mongoose = require("mongoose");
+const CheckoutSession = require("./model/billingSchema");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -50,7 +51,7 @@ app.post("/checkout", async (req, res) => {
       cancel_url: `${process.env.BASE_URL}/cancel`,
     });
 
-    console.log(paymentIntent);
+    // console.log(paymentIntent);
 
     res.redirect(paymentIntent.url);
   } catch (error) {
@@ -62,15 +63,28 @@ app.post("/checkout", async (req, res) => {
 });
 
 app.get("/complete", async (req, res) => {
-  const sessionId = req.query.session; // Ensure session ID is retrieved
+  const sessionId = req.query.session;
   if (!sessionId) {
     return res.status(400).send("Session ID is missing");
   }
-  console.log(sessionId);
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    console.log(session);
+
+    // Save session data to the database
+    const newSession = new CheckoutSession({
+      sessionId: session.id,
+      customerEmail: session.customer_details.email,
+      customerName: session.customer_details.name,
+      amountTotal: session.amount_total,
+      currency: session.currency,
+      paymentStatus: session.payment_status,
+      paymentIntent: session.payment_intent,
+    });
+
+    await newSession.save();
+    console.log("Payment session saved to the database.");
+
     res.status(200).send("Your payment was successful");
   } catch (error) {
     console.error("Error retrieving session:", error);
