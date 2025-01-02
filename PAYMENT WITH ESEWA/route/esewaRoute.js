@@ -60,6 +60,7 @@ Router.get("/complete-payment", async (req, res) => {
   try {
     // Verify payment with eSewa
     const paymentInfo = await verifyEsewaPayment(data);
+    console.log(paymentInfo);
 
     // Find the purchased item using the transaction UUID
     const purchasedItemData = await PurchasedItem.findById(
@@ -98,6 +99,7 @@ Router.get("/complete-payment", async (req, res) => {
       paymentData,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "An error occurred during payment verification",

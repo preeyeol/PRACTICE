@@ -20,9 +20,10 @@ async function getEsewaPaymentHash({ amount, transaction_uuid }) {
   }
 }
 
-async function verifyEsewaPayment(encodedData) {
+const verifyEsewaPayment = async (encodedData) => {
   try {
     // decoding base64 code revieved from esewa
+    console.log(encodedData);
     let decodedData = atob(encodedData);
     decodedData = await JSON.parse(decodedData);
     let headersList = {
@@ -60,6 +61,6 @@ async function verifyEsewaPayment(encodedData) {
   } catch (error) {
     throw error;
   }
-}
+};
 
 module.exports = { getEsewaPaymentHash, verifyEsewaPayment };
